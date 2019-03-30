@@ -64,9 +64,9 @@ parser.add_argument('--shape_color_combos_json', default=None,
          "for CLEVR-CoGenT.")
 
 # Settings for objects
-parser.add_argument('--min_objects', default=3, type=int,
+parser.add_argument('--min_objects', default=2, type=int,
     help="The minimum number of objects to place in each scene")
-parser.add_argument('--max_objects', default=10, type=int,
+parser.add_argument('--max_objects', default=5, type=int,
     help="The maximum number of objects to place in each scene")
 parser.add_argument('--min_dist', default=0.25, type=float,
     help="The minimum allowed distance between object centers")
@@ -87,7 +87,7 @@ parser.add_argument('--start_idx', default=0, type=int,
     help="The index at which to start for numbering rendered images. Setting " +
          "this to non-zero values allows you to distribute rendering across " +
          "multiple machines and recombine the results later.")
-parser.add_argument('--num_images', default=5, type=int,
+parser.add_argument('--num_images', default=1000, type=int,
     help="The number of images to render")
 parser.add_argument('--filename_prefix', default='CLEVR',
     help="This prefix will be prepended to the rendered images and JSON scenes")
@@ -123,13 +123,13 @@ parser.add_argument('--date', default=dt.today().strftime("%m/%d/%Y"),
          "defaults to today's date")
 
 # Rendering options
-parser.add_argument('--use_gpu', default=0, type=int,
+parser.add_argument('--use_gpu', default=1, type=int,
     help="Setting --use_gpu 1 enables GPU-accelerated rendering using CUDA. " +
          "You must have an NVIDIA GPU with the CUDA toolkit installed for " +
          "to work.")
-parser.add_argument('--width', default=320, type=int,
+parser.add_argument('--width', default=256, type=int,
     help="The width (in pixels) for the rendered images")
-parser.add_argument('--height', default=240, type=int,
+parser.add_argument('--height', default=256, type=int,
     help="The height (in pixels) for the rendered images")
 parser.add_argument('--key_light_jitter', default=1.0, type=float,
     help="The magnitude of random jitter to add to the key light position.")
@@ -137,7 +137,7 @@ parser.add_argument('--fill_light_jitter', default=1.0, type=float,
     help="The magnitude of random jitter to add to the fill light position.")
 parser.add_argument('--back_light_jitter', default=1.0, type=float,
     help="The magnitude of random jitter to add to the back light position.")
-parser.add_argument('--camera_jitter', default=0.5, type=float,
+parser.add_argument('--camera_jitter', default=0.0, type=float,
     help="The magnitude of random jitter to add to the camera position")
 parser.add_argument('--render_num_samples', default=512, type=int,
     help="The number of samples to use when rendering. Larger values will " +
@@ -269,8 +269,9 @@ def render_scene(args,
 
   # Add random jitter to camera position
   if args.camera_jitter > 0:
-    for i in range(3):
-      bpy.data.objects['Camera'].location[i] += rand(args.camera_jitter)
+    # for i in range(3):
+    #   bpy.data.objects['Camera'].location[i] += rand(args.camera_jitter)
+    bpy.data.objects['Camera'].location[2] += rand(args.camera_jitter) # only jitter z axis of camera
 
   # Figure out the left, up, and behind directions along the plane and record
   # them in the scene structure
